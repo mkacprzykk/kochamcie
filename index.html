@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Przepraszam...</title>
+    <title>Przepraszam... Ten kwiatek jest dla Ciebie 🌸</title>
     <style>
         :root {
-            --primary-color: #ff6b81;
-            --secondary-color: #ff4757;
-            --bg-color: #ffeaa7;
-            --text-color: #2f3542;
+            --bg-gradient-start: #fff5f7;
+            --bg-gradient-end: #ffe3e8;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --primary-color: #e84393;
+            --secondary-color: #d63031;
+            --text-color: #2d3436;
+            --text-muted: #636e72;
         }
 
         * {
@@ -20,247 +23,369 @@
         }
 
         body {
-            background: linear-gradient(135deg, #f7d794, #ff7979);
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            padding: 20px;
+            overflow-x: hidden;
             position: relative;
-            color: var(--text-color);
         }
 
-        /* Latające serduszka w tle */
-        .floating-heart {
+        /* Płatki spadające w tle */
+        .petal {
             position: absolute;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 20px;
+            background: #ffb7c5;
+            border-radius: 15px 0 15px 0;
+            opacity: 0.7;
             pointer-events: none;
-            animation: float 6s linear infinite;
+            animation: fall 8s linear infinite;
         }
 
-        @keyframes float {
+        @keyframes fall {
             0% {
-                transform: translateY(100vh) scale(0);
+                transform: translateY(-10vh) rotate(0deg);
                 opacity: 0;
             }
-            50% {
+            10% {
                 opacity: 0.8;
             }
             100% {
-                transform: translateY(-10vh) scale(1.2);
+                transform: translateY(105vh) rotate(360deg);
                 opacity: 0;
             }
         }
 
-        /* Kartka / Kontener */
-        .container {
-            background: rgba(255, 255, 255, 0.92);
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        /* Glowna kartka */
+        .card {
+            background: var(--card-bg);
+            padding: 35px 25px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(232, 67, 147, 0.15);
             text-align: center;
-            max-width: 500px;
-            width: 90%;
-            backdrop-filter: blur(5px);
+            max-width: 480px;
+            width: 100%;
             z-index: 10;
-            transition: all 0.5s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
         h1 {
-            color: var(--secondary-color);
-            margin-bottom: 15px;
-            font-size: 2rem;
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            font-weight: 700;
         }
 
-        p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            color: #57606f;
+        p.intro {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
         }
 
+        /* Przyciski */
         .btn {
-            background-color: var(--primary-color);
+            background: linear-gradient(45deg, #fd79a8, var(--primary-color));
             color: white;
             border: none;
-            padding: 14px 28px;
-            font-size: 1.1rem;
-            border-radius: 30px;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 25px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 107, 129, 0.4);
+            box-shadow: 0 6px 18px rgba(232, 67, 147, 0.3);
             transition: all 0.3s ease;
-            outline: none;
         }
 
         .btn:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-3px) scale(1.03);
-            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.6);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 22px rgba(232, 67, 147, 0.45);
         }
 
         .btn:active {
             transform: translateY(0);
         }
 
-        /* Sekcja z wielkim sercem */
-        .screen-2 {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.8s ease-in-out;
-        }
-
-        .heart-wrapper {
+        /* Kontener płótna z animacją */
+        .flower-container {
             position: relative;
-            width: 280px;
-            height: 280px;
-            margin: 20px auto 30px auto;
+            width: 300px;
+            height: 320px;
+            margin: 15px auto;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* Animowane pulsujące serce */
-        .big-heart {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background-color: var(--secondary-color);
-            transform: rotate(-45deg);
-            animation: pulse 1.2s infinite alternate ease-in-out;
-            box-shadow: 0 0 40px rgba(255, 71, 87, 0.6);
+        canvas {
+            background: transparent;
+            display: block;
         }
 
-        .big-heart::before,
-        .big-heart::after {
-            content: "";
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background-color: var(--secondary-color);
-            border-radius: 50%;
+        /* Druga część (tekst przeprosin) */
+        .message-section {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 1s ease-in-out;
+            max-height: 0;
+            overflow: hidden;
         }
 
-        .big-heart::before {
-            top: -50px;
-            left: 0;
+        .message-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+            max-height: 500px;
+            margin-top: 15px;
         }
 
-        .big-heart::after {
-            left: 50px;
-            top: 0;
+        .message-box {
+            background: rgba(255, 240, 245, 0.8);
+            border-left: 4px solid var(--primary-color);
+            padding: 15px 18px;
+            border-radius: 8px;
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .message-box p {
+            color: var(--text-color);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .message-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .highlight {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .heart-icon {
+            display: inline-block;
+            color: var(--primary-color);
+            animation: pulse 1.2s infinite alternate;
         }
 
         @keyframes pulse {
-            0% {
-                transform: rotate(-45deg) scale(1);
-            }
-            100% {
-                transform: rotate(-45deg) scale(1.15);
-            }
-        }
-
-        /* Tekst wewnątrz serduszka / na sercu */
-        .heart-text {
-            position: relative;
-            z-index: 2;
-            color: white;
-            font-weight: bold;
-            font-size: 0.95rem;
-            padding: 20px;
-            text-align: center;
-            line-height: 1.4;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-            max-width: 200px;
-        }
-
-        .reasons-list {
-            text-align: left;
-            margin: 20px 0;
-            background: #fff0f3;
-            padding: 15px 20px 15px 35px;
-            border-radius: 12px;
-            font-size: 0.95rem;
-        }
-
-        .reasons-list li {
-            margin-bottom: 8px;
-            color: #444;
-        }
-
-        .footer-note {
-            font-size: 0.9rem;
-            font-style: italic;
-            color: #888;
-            margin-top: 15px;
+            0% { transform: scale(1); }
+            100% { transform: scale(1.25); }
         }
     </style>
 </head>
 <body>
 
-    <!-- Ekran 1: Zwykłe otwierające przeprosiny -->
-    <div class="container" id="screen1">
-        <h1>Mam Ci coś do powiedzenia... ❤️</h1>
-        <p>Zależy mi na Tobie bardziej, niż potrafię to wyrazić słowami. Przygotowałem coś dla Ciebie, kliknij poniżej...</p>
-        <button class="btn" onclick="nextScreen()">Otwórz serce 💌</button>
-    </div>
-
-    <!-- Ekran 2: Wielkie serce i przeprosiny -->
-    <div class="container screen-2" id="screen2">
-        <div class="heart-wrapper">
-            <div class="big-heart"></div>
-            <div class="heart-text">
-                Przepraszam, że poczułaś się przeze mnie źle. ❤️
-            </div>
-        </div>
-
-        <p style="font-weight: 500; color: #2f3542;">
-            Chcę, żebyś zawsze czuła się przy mnie <strong>bezpiecznie</strong> i <strong>słuchana</strong>. Przepraszam za to, że w tamtej chwili się tak nie poczułaś.
+    <div class="card">
+        <h1>Wyhodowałem coś dla Ciebie... 🌸</h1>
+        <p class="intro" id="intro-text">
+            Chciałem Cię przeprosić w wyjątkowy sposób. Kliknij przycisk poniżej, aby ten kwiatek zakwitł specjalnie dla Ciebie.
         </p>
 
-        <ul class="reasons-list">
-            <li>✨ Twoje uczucia są dla mnie najważniejsze.</li>
-            <li>✨ Obiecuję uważniej Cię słuchać.</li>
-            <li>✨ Chcę być dla Ciebie oparciem w każdej sytuacji.</li>
-        </ul>
+        <button class="btn" id="draw-btn" onclick="startFlowerAnimation()">Niech zakwitnie ✨</button>
 
-        <p class="footer-note">Daj mi znać, kiedy będziesz gotowa porozmawiać... jestem tu dla Ciebie. 🌹</p>
+        <div class="flower-container">
+            <canvas id="flowerCanvas" width="300" height="320"></canvas>
+        </div>
+
+        <div class="message-section" id="messageSection">
+            <div class="message-box">
+                <p>
+                    Przepraszam Cię z całego serca... Na bardzo wiele sposobów żałuję, że poczułaś się przeze mnie źle.
+                </p>
+                <p>
+                    Zależy mi na tym, żebyś zawsze czuła się przy mnie <span class="highlight">bezpieczna</span>, <span class="highlight">doceniona</span> i <span class="highlight">wysłuchana</span>.
+                </p>
+                <p>
+                    Każda chwila z Tobą jest dla mnie ważna i chcę dbać o naszą relację tak, jak dba się o ten kwiatek. <span class="heart-icon">💖</span>
+                </p>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">
+                Daj mi znać, gdy będziesz gotowa na rozmowę. Jestem tu dla Ciebie.
+            </p>
+        </div>
     </div>
 
     <script>
-        // Tworzenie tła z latającymi serduszkami
-        function createHearts() {
-            const heartIcons = ['❤️', '💖', '💕', '💗', '🌸'];
-            for (let i = 0; i < 25; i++) {
-                const heart = document.createElement('div');
-                heart.classList.add('floating-heart');
-                heart.innerText = heartIcons[Math.floor(Math.random() * heartIcons.length)];
+        // Efekt spadających płatków w tle
+        function createPetals() {
+            for (let i = 0; i < 20; i++) {
+                const petal = document.createElement('div');
+                petal.classList.add('petal');
                 
-                heart.style.left = Math.random() * 100 + 'vw';
-                heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
-                heart.style.animationDelay = (Math.random() * 5) + 's';
-                heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
+                const size = Math.random() * 10 + 10;
+                petal.style.width = size + 'px';
+                petal.style.height = (size * 1.5) + 'px';
                 
-                document.body.appendChild(heart);
+                petal.style.left = Math.random() * 100 + 'vw';
+                petal.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                petal.style.animationDelay = (Math.random() * 5) + 's';
+                
+                document.body.appendChild(petal);
             }
         }
+        createPetals();
 
-        // Przejście do drugiego ekranu
-        function nextScreen() {
-            const s1 = document.getElementById('screen1');
-            const s2 = document.getElementById('screen2');
+        // Animacja Rysowania Kwiatka na Canvas
+        const canvas = document.getElementById('flowerCanvas');
+        const ctx = canvas.getContext('2d');
+        let isAnimating = false;
 
-            s1.style.opacity = '0';
+        function startFlowerAnimation() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            const btn = document.getElementById('draw-btn');
+            btn.style.opacity = '0';
+            btn.style.pointerEvents = 'none';
+
             setTimeout(() => {
-                s1.style.display = 'none';
-                s2.style.display = 'block';
-                setTimeout(() => {
-                    s2.style.opacity = '1';
-                }, 50);
-            }, 500);
+                btn.style.display = 'none';
+            }, 300);
+
+            // Krok 1: Rysowanie Łodygi (Stem)
+            let stemProgress = 0;
+            const startX = 150;
+            const startY = 300;
+            const endY = 140;
+
+            function drawStem() {
+                if (stemProgress < 1) {
+                    stemProgress += 0.02;
+                    const currentY = startY - (startY - endY) * stemProgress;
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    // Lekkie zakrzywienie łodygi dla naturalnego wyglądu
+                    ctx.quadraticCurveTo(startX - 15, startY - (startY - endY) / 2, startX, currentY);
+                    ctx.strokeStyle = '#2ed573';
+                    ctx.lineWidth = 6;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+
+                    requestAnimationFrame(drawStem);
+                } else {
+                    // Krok 2: Rysowanie Liści
+                    drawLeaves(() => {
+                        // Krok 3: Rysowanie Płatków Kwiatka
+                        drawPetals(() => {
+                            // Krok 4: Rysowanie Środka Kwiatka
+                            drawCenter(() => {
+                                // Pokazanie sekcji tekstowej po ukończeniu rysowania
+                                document.getElementById('messageSection').classList.add('visible');
+                            });
+                        });
+                    });
+                }
+            }
+
+            drawStem();
         }
 
-        createHearts();
+        // Rysowanie Liści
+        function drawLeaves(callback) {
+            let leafProgress = 0;
+
+            function animateLeaves() {
+                if (leafProgress < 1) {
+                    leafProgress += 0.04;
+
+                    // Lewy liść
+                    ctx.beginPath();
+                    ctx.ellipse(135, 230, 20 * leafProgress, 8 * leafProgress, -Math.PI / 4, 0, Math.PI * 2);
+                    ctx.fillStyle = '#2ed573';
+                    ctx.fill();
+
+                    // Prawy liść
+                    ctx.beginPath();
+                    ctx.ellipse(165, 200, 22 * leafProgress, 9 * leafProgress, Math.PI / 4, 0, Math.PI * 2);
+                    ctx.fillStyle = '#2ed573';
+                    ctx.fill();
+
+                    requestAnimationFrame(animateLeaves);
+                } else {
+                    callback();
+                }
+            }
+            animateLeaves();
+        }
+
+        // Rysowanie Płatków
+        function drawPetals(callback) {
+            let petalScale = 0;
+            const totalPetals = 8;
+            const centerX = 150;
+            const centerY = 130;
+            const petalRadius = 32;
+
+            function animatePetals() {
+                if (petalScale < 1) {
+                    petalScale += 0.03;
+
+                    // Czyszczenie obszaru korony przed ponownym narysowaniem powiększających się płatków
+                    ctx.clearRect(0, 0, canvas.width, 170);
+
+                    // Ponowne przerysowanie górnej części łodygi
+                    ctx.beginPath();
+                    ctx.moveTo(150, 170);
+                    ctx.quadraticCurveTo(150 - 15, 220, 150, 130);
+                    ctx.strokeStyle = '#2ed573';
+                    ctx.lineWidth = 6;
+                    ctx.stroke();
+
+                    for (let i = 0; i < totalPetals; i++) {
+                        const angle = (i * 2 * Math.PI) / totalPetals;
+                        const x = centerX + Math.cos(angle) * (petalRadius * petalScale);
+                        const y = centerY + Math.sin(angle) * (petalRadius * petalScale);
+
+                        ctx.beginPath();
+                        ctx.arc(x, y, 22 * petalScale, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(255, 121, 198, 0.85)';
+                        ctx.fill();
+
+                        // Cień/Obrys płatka dla głębi
+                        ctx.strokeStyle = 'rgba(232, 67, 147, 0.4)';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+
+                    requestAnimationFrame(animatePetals);
+                } else {
+                    callback();
+                }
+            }
+            animatePetals();
+        }
+
+        // Rysowanie Środka Kwiatka
+        function drawCenter(callback) {
+            let centerScale = 0;
+            const centerX = 150;
+            const centerY = 130;
+
+            function animateCenter() {
+                if (centerScale < 1) {
+                    centerScale += 0.05;
+
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, 18 * centerScale, 0, Math.PI * 2);
+                    ctx.fillStyle = '#f1c40f';
+                    ctx.fill();
+
+                    ctx.strokeStyle = '#f39c12';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    requestAnimationFrame(animateCenter);
+                } else {
+                    callback();
+                }
+            }
+            animateCenter();
+        }
     </script>
 </body>
 </html>
